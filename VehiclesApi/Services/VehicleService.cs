@@ -8,43 +8,43 @@ namespace VehiclesApi.Services;
 
 public class VehicleService : IVehicle
 {
-    private ApiDbContext dbContext;
+    private readonly ApiDbContext _dbContext;
 
-    public VehicleService()
+    public VehicleService(ApiDbContext dbContext)
     {
-        dbContext = new ApiDbContext();
+        _dbContext = dbContext;
     }
     
     public async Task<List<Vehicle>> GetAllVehicles()
     {
-        Debug.Assert(dbContext.Vehicles != null, "dbContext.Vehicles != null");
-        return await dbContext.Vehicles.ToListAsync();
+        Debug.Assert(_dbContext.Vehicles != null, "dbContext.Vehicles != null");
+        return await _dbContext.Vehicles.ToListAsync();
     }
 
     public async Task<Vehicle?> GetVehicleById(int id)
     {
-        Debug.Assert(dbContext.Vehicles != null, "dbContext.Vehicles != null");
-        return await dbContext.Vehicles.FindAsync(id);
+        Debug.Assert(_dbContext.Vehicles != null, "dbContext.Vehicles != null");
+        return await _dbContext.Vehicles.FindAsync(id);
     }
 
     public async Task AddVehicle(Vehicle vehicle)
     {
-        Debug.Assert(dbContext.Vehicles != null, "dbContext.Vehicles != null");
-        await dbContext.Vehicles.AddAsync(vehicle);
-        await dbContext.SaveChangesAsync();
+        Debug.Assert(_dbContext.Vehicles != null, "dbContext.Vehicles != null");
+        await _dbContext.Vehicles.AddAsync(vehicle);
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task UpdateVehicle(int id, Vehicle vehicle)
     {
-        dbContext.Entry(await GetVehicleById(id))
+        _dbContext.Entry(await GetVehicleById(id))
             .CurrentValues.SetValues(vehicle);
         
-        await dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task DeleteVehicle(int id)
     {
-        Debug.Assert(dbContext.Vehicles != null, "dbContext.Vehicles != null");
-        dbContext.Vehicles.Remove(await dbContext.Vehicles.SingleAsync(v => v.Id == id));
+        Debug.Assert(_dbContext.Vehicles != null, "dbContext.Vehicles != null");
+        _dbContext.Vehicles.Remove(await _dbContext.Vehicles.SingleAsync(v => v.Id == id));
     }
 }
